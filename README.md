@@ -844,3 +844,898 @@ done < filename.txt
 - Skip the number 5 using continue and stop the loop when it reaches 8 using break.
 ```
 
+# 7. Functions in Bash
+
+Functions in Bash allow you to encapsulate and reuse blocks of code. They help organize scripts, make them more readable, and reduce redundancy. In this section, we'll cover the basics of creating and using functions, passing parameters, and using return values.
+
+---
+
+### Defining a Function
+
+A function in Bash is defined with a name followed by a set of commands inside curly braces `{ }`. Function definitions must appear before they are called in the script.
+
+- **Syntax**:
+```bash
+  function_name() {
+    # Commands to execute
+  }
+```
+- Example
+```bash
+greet() {
+  echo "Hello, welcome to Bash scripting!"
+}
+
+# Call the function
+greet
+```
+### Function Parameters
+You can pass arguments to a function, and they are accessed using positional parameters within the function (e.g., $1, $2, ...).
+
+- Example: Passing parameters to a function
+```bash
+greet_person() {
+  echo "Hello, $1!"
+}
+
+# Call the function with an argument
+greet_person "Alice"
+```
+
+- Example with Multiple Parameters:
+```bash
+add_numbers() {
+  sum=$(( $1 + $2 ))
+  echo "The sum of $1 and $2 is: $sum"
+}
+
+# Call the function with two arguments
+add_numbers 3 7
+```
+
+### Returning Values from Functions
+Bash functions can return a value using the return command. However, this value is limited to integers between 0 and 255 (useful for status codes). For more complex outputs, use echo or global variables.
+- Using return for Status Codes:
+```bash
+check_even() {
+  if (( $1 % 2 == 0 )); then
+    return 0  # Success
+  else
+    return 1  # Failure
+  fi
+}
+
+check_even 4
+if [ $? -eq 0 ]; then
+  echo "Number is even."
+else
+  echo "Number is odd."
+fi
+```
+
+- Using echo for Value Return:
+```bash
+calculate_square() {
+  echo $(( $1 * $1 ))
+}
+
+# Capture the output of the function
+result=$(calculate_square 5)
+echo "The square is: $result"
+```
+### Local Variables in Functions
+To avoid conflicts with variables outside a function, you can use the local keyword to declare variables that are only accessible within the function.
+Example:
+```bash
+calculate_sum() {
+  local a=$1
+  local b=$2
+  local sum=$(( a + b ))
+  echo $sum
+}
+
+# The variable `sum` is local to the function
+result=$(calculate_sum 10 20)
+echo "Sum: $result"
+```
+### Recursive Functions
+A function can call itself, creating a recursive function. Be cautious with recursion in Bash, as it may lead to stack overflow if there’s no termination condition.
+- Example: Factorial calculation using recursion
+```bash
+factorial() {
+  if [ $1 -le 1 ]; then
+    echo 1
+  else
+    previous=$(factorial $(( $1 - 1 )))
+    echo $(( $1 * previous ))
+  fi
+}
+
+result=$(factorial 5)
+echo "Factorial of 5 is: $result"
+```
+
+### Practice Exercise
+```bash
+1. Simple Greeting Function:
+
+- Write a function that accepts a name as a parameter and prints "Hello, [name]!".
+2. Addition Function:
+
+- Write a function that takes two numbers as parameters, adds them, and returns the result.
+3. Even or Odd Check:
+
+- Write a function that checks if a given number is even or odd and returns an appropriate message.
+4.Using Local Variables:
+
+- Write a function that calculates the area of a rectangle using local variables for length and width.
+5.Recursive Factorial Function:
+
+- Write a recursive function that calculates the factorial of a given number.
+```
+
+# 8. File and Directory Management
+
+Managing files and directories is a key part of shell scripting, allowing you to automate tasks like file creation, deletion, copying, and renaming. This section covers the essential commands for handling files and directories in Bash.
+
+---
+
+### Creating Files and Directories
+
+- **Creating a File**:
+  - Use `touch` to create an empty file.
+  - Example:
+    ```bash
+    touch myfile.txt
+    ```
+
+- **Creating a Directory**:
+  - Use `mkdir` to create a new directory.
+  - Example:
+    ```bash
+    mkdir mydirectory
+    ```
+
+- **Creating Nested Directories**:
+  - Use the `-p` option with `mkdir` to create nested directories in one command.
+  - Example:
+    ```bash
+    mkdir -p mydirectory/subdirectory
+    ```
+
+### Copying Files and Directories
+
+- **Copying a File**:
+  - Use `cp` to copy files.
+  - Example:
+    ```bash
+    cp source.txt destination.txt
+    ```
+
+- **Copying a Directory**:
+  - Use the `-r` (recursive) option with `cp` to copy an entire directory.
+  - Example:
+    ```bash
+    cp -r sourcedir targetdir
+    ```
+
+### Moving and Renaming Files and Directories
+
+- **Moving a File**:
+  - Use `mv` to move a file to a different directory.
+  - Example:
+    ```bash
+    mv myfile.txt /path/to/destination/
+    ```
+
+- **Renaming a File or Directory**:
+  - Use `mv` to rename a file or directory.
+  - Example:
+    ```bash
+    mv oldname.txt newname.txt
+    ```
+
+### Deleting Files and Directories
+
+- **Deleting a File**:
+  - Use `rm` to remove a file.
+  - Example:
+    ```bash
+    rm myfile.txt
+    ```
+
+- **Deleting a Directory**:
+  - Use `rm -r` to remove a directory and its contents.
+  - Example:
+    ```bash
+    rm -r mydirectory
+    ```
+
+- **Forcing Deletion**:
+  - Use `rm -rf` to delete files or directories without prompting, even if they’re write-protected.
+  - **Caution**: This command is powerful and should be used carefully to avoid accidental data loss.
+  - Example:
+    ```bash
+    rm -rf mydirectory
+    ```
+
+### Checking File and Directory Existence
+
+- **Check if a File Exists**:
+```bash
+  if [ -f "myfile.txt" ]; then
+    echo "File exists."
+  else
+    echo "File does not exist."
+  fi
+```
+- Check if a Directory Exists:
+```bash
+if [ -d "mydirectory" ]; then
+  echo "Directory exists."
+else
+  echo "Directory does not exist."
+fi
+```
+
+### Reading from and Writing to Files
+- Appending Text to a File:
+  - Use >> to append text to a file.
+```bash
+echo "This is a new line" >> myfile.txt
+```
+- Overwriting Text in a File:
+  - Use > to overwrite the contents of a file.
+```bash
+echo "This will replace existing content" > myfile.txt
+```
+- Reading a File Line by Line:
+  - Use while loop and read command to read a file line by line.
+  - Example
+```bash
+while IFS= read -r line; do
+  echo "$line"
+done < myfile.txt
+```
+
+### File Permissions
+- Changing File Permissions:
+  - Use chmod to modify file permissions.
+  - Example:
+```bash
+chmod +x myscript.sh
+```
+- Changing File Ownership:
+  - Use chown to change the owner of a file (requires root privileges).
+  - Example
+```bash
+sudo chown user:group myfile.txt
+```
+```bash
+### Practice Exercise
+1. Create and Copy Files:
+
+- Create a file called testfile.txt and copy it to a directory called backup.
+2. Move and Rename Files:
+
+- Write a script to create a file data.txt, then rename it to data_backup.txt.
+3. Check Existence and Delete:
+
+- Write a script that checks if a directory called old_files exists. If it does, delete it.
+4. Write and Append to Files:
+
+- Write a script that creates a file called logfile.txt, writes "Start of log" to it, and then appends a new timestamped entry each time the script is run.
+5. File Permissions:
+
+- Create a script file, make it executable, and run it.
+```
+
+# 9. Text Processing and Manipulation
+
+Bash provides powerful tools for processing and manipulating text, which is especially useful for data extraction, formatting, and reporting. This section covers essential text-processing commands, including `cat`, `grep`, `awk`, `sed`, and more.
+
+---
+
+### Viewing and Displaying Text
+
+- **`cat`**: Displays the contents of a file.
+```bash
+  cat filename.txt
+```
+- head and tail: Display the beginning or end of a file.
+  - head: Shows the first few lines (default: 10 lines).
+```bash
+head filename.txt
+head -n 5 filename.txt  # Shows first 5 lines
+```
+- tail: Shows the last few lines (default: 10 lines).
+```bash
+tail filename.txt
+tail -n 5 filename.txt  # Shows last 5 lines
+```
+
+- less: Allows you to scroll through a file.
+```bash
+less filename.txt
+```
+
+### Searching Text with grep
+- grep searches for patterns in text files, making it useful for filtering and finding specific lines of text.
+  - Basic Syntax:
+```bash
+grep "pattern" filename.txt
+```
+- Examples:
+  - Search for the word "error" in logfile.txt.
+```bash
+grep "error" logfile.txt
+```
+- Use the -i option for case-insensitive search.
+```bash
+grep -i "error" logfile.txt
+```
+- Search recursively in all files within a directory.
+```bash
+grep -r "pattern" /path/to/directory
+```
+
+### Modifying Text with sed
+sed (Stream Editor) is used for text substitution, deletion, and more complex text manipulation.
+- Basic Substitution:
+  - Replace the first occurrence of "old" with "new" in each line.
+```bash
+sed 's/old/new/' filename.txt
+```
+  - Replace all occurrences of "old" with "new" in each line.
+```
+sed 's/old/new/g' filename.txt
+```
+- Deleting Lines:
+  - Delete lines that contain a specific pattern
+```bash
+sed '/pattern/d' filename.txt
+```
+- In-Place Editing:
+  - Use -i to modify the file directly (use with caution)
+```bash
+sed -i 's/old/new/g' filename.txt
+```
+
+### Text Processing with awk
+awk is a powerful text-processing tool that splits text by columns, applies conditions, and performs complex formatting.
+- **Basic Syntax:**
+```bash
+awk 'pattern { action }' filename.txt
+```
+- Example:
+  - Print the first column of each line.
+```bash
+awk '{print $1}' filename.txt
+```
+  - Print lines where the third column is greater than 100.
+```bash
+awk '$3 > 100' filename.txt
+```
+  - Calculate the sum of the values in the second column.
+```bash
+awk '{sum += $2} END {print sum}' filename.txt
+```
+
+### Counting Words and Lines
+- wc: Counts lines, words, and characters in files
+  - Count lines, words, and characters
+```bash
+wc filename.txt
+```
+  - Count only lines
+```bash
+wc -l filename.txt
+```
+### Sorting and Uniqueness
+- sort: Sorts lines in a file.
+```bash
+sort filename.txt
+```
+- uniq: Removes duplicate lines from a sorted file. Use with sort to ensure duplicates are adjacent.
+```bash
+sort filename.txt | uniq
+```
+- uniq -c: Counts occurrences of each unique line.
+```bash
+sort filename.txt | uniq -c
+```
+
+### Advanced Text Processing: cut and paste
+- cut: Extracts specific fields or columns from text.
+  - Extract the first and third columns (fields).
+```bash
+cut -d ',' -f 1,3 filename.csv
+```
+- paste: Merges lines from multiple files
+```bash
+paste file1.txt file2.txt
+```
+
+```bash
+### Practice Exercise
+1. Finding Patterns:
+
+- Use grep to find all lines containing "error" in a log file and save the results to error_logs.txt.
+2. Replacing Text:
+
+- Use sed to replace all instances of "foo" with "bar" in a file called data.txt.
+3. Extracting Columns with awk:
+
+- Write a script to print the second column of data.csv where the value in the first column is greater than 50.
+4. Counting and Sorting:
+
+- Write a script that counts the number of occurrences of each word in article.txt and displays them in descending order.
+5. Using cut to Extract Data:
+
+- Use cut to extract the first and last names from a CSV file called employees.csv, where names are in the first two columns.
+
+```
+
+# 10. Working with Input and Output
+
+Handling input and output effectively is fundamental to building interactive and dynamic Bash scripts. In this section, we’ll explore how to accept user input, redirect output, and work with standard input, output, and error streams.
+
+---
+
+### User Input with `read`
+
+The `read` command is used to prompt the user for input during script execution.
+
+- **Basic Syntax**:
+```bash
+  read variable_name
+```
+- Example: Prompting for user input
+```
+echo "Enter your name:"
+read name
+echo "Hello, $name!"
+```
+- Using -p option: To display a prompt on the same line
+```bash
+read -p "Enter your age: " age
+echo "You are $age years old."
+```
+- Using -s option: To hide input (useful for passwords)
+```bash
+read -s -p "Enter your password: " password
+echo -e "\nPassword saved securely."
+```
+
+### Command-Line Arguments
+Bash scripts can accept arguments passed during execution, accessible via positional parameters.
+- Accessing Positional Parameters:
+  - $1, $2, ... for specific arguments.
+  - $@ for all arguments as a list.
+  - $# for the number of arguments.
+- Example:
+```bash
+# Save this as example.sh
+echo "First argument: $1"
+echo "Second argument: $2"
+echo "All arguments: $@"
+echo "Number of arguments: $#"
+
+# Run the script
+# ./example.sh arg1 arg2
+```
+
+### Redirection Operators
+Redirection operators control where input and output go, allowing you to save command output to files or combine output streams.
+- Standard Output (> and >>):
+  - `>` overwrites a file with command output.
+  - `>>` appends command output to a file.
+  - Example:
+```bash
+echo "This is a test" > output.txt     # Overwrites output.txt
+echo "Another line" >> output.txt      # Appends to output.txt
+```
+- Standard Input (<):
+  - Redirects a file as input to a command.
+  - Example:
+```bash
+while read line; do
+  echo "$line"
+done < input.txt
+```
+- Standard Error (2>):
+  - Redirects error messages to a file.
+  - example
+```bash
+ls nonexistent_file 2> error_log.txt
+```
+- **Redirecting Both Standard Output and Error (&>):**
+  - Redirects both standard output and error to the same file.
+  - Example
+```bash
+command &> output_and_errors.txt
+```
+
+### Pipes (|)
+Pipes take the output of one command and use it as input for another command, enabling command chaining.
+- Example: Find the word "error" in a log file and display only unique lines
+```bash
+grep "error" logfile.txt | sort | uniq
+```
+
+### tee Command
+The tee command reads from standard input and writes to both standard output and one or more files, useful for logging while displaying output.
+- Example: Display command output and write it to output.log at the same time
+```bash
+echo "Saving this output" | tee output.log
+```
+- Appending with -a option:
+```bash
+echo "Appending to log" | tee -a output.log
+```
+### Here Documents (<<)
+A Here Document allows you to use multi-line strings as input, typically for feeding commands.
+- Syntax
+```bash
+command <<EOF
+text
+EOF
+```
+- Example
+```bash
+cat <<EOF
+This is a multi-line
+string input for the
+cat command.
+EOF
+```
+### Here Strings (<<<)
+A Here String redirects a single string as input to a command.
+- Example
+```bash
+grep "word" <<< "This is a sample line containing word."
+```
+
+```bash
+### Practice Exercise
+1. User Input and Redirection:
+
+- Write a script that prompts the user for a filename, then appends the current date and time to that file.
+2. Command-Line Arguments:
+
+- Create a script that accepts three arguments, adds them as numbers, and outputs the sum.
+3. Output Redirection and Error Handling:
+
+- Write a script that attempts to delete a file. If the file doesn’t exist, redirect the error to error_log.txt.
+4. Pipe and tee Command:
+
+- Write a script that displays a sorted list of unique words in a file and also saves the list to unique_words.txt.
+5. Here Document Usage:
+
+- Create a script that outputs a multi-line welcome message to the user using a Here Document.
+```
+
+# 11. Error Handling and Debugging
+
+Effective error handling and debugging are crucial for building reliable Bash scripts. This section covers techniques to handle errors gracefully, debug scripts, and ensure smooth script execution.
+
+---
+
+### Basic Error Handling
+
+1. **Exit Status**:
+   - Each command in Bash returns an exit status (0 for success, non-zero for errors).
+   - Check the exit status of the last command using `$?`.
+   - Example:
+     ```bash
+     ls /nonexistent_directory
+     if [ $? -ne 0 ]; then
+       echo "Error: Directory does not exist."
+     fi
+     ```
+
+2. **`exit` Command**:
+   - Exits a script immediately with a specified status code.
+   - Example:
+     ```bash
+     echo "Exiting with error status 1."
+     exit 1
+     ```
+
+3. **`||` Operator**:
+   - Run a command if the previous command fails.
+   - Example:
+     ```bash
+     mkdir mydir || echo "Failed to create directory."
+     ```
+
+4. **`&&` Operator**:
+   - Run a command only if the previous command succeeds.
+   - Example:
+     ```bash
+     cd mydir && echo "Directory changed successfully."
+     ```
+
+### Advanced Error Handling
+
+1. **Using `set` for Error Management**:
+   - `set -e`: Stops the script if any command fails (useful in critical scripts).
+   - `set -u`: Treats unset variables as errors.
+   - `set -o pipefail`: Ensures pipeline errors are caught.
+   - Example:
+     ```bash
+     set -euo pipefail
+     ```
+
+2. **`trap` Command**:
+   - Executes a command when the script exits or receives a signal.
+   - Example: Clean up temporary files on exit.
+     ```bash
+     trap 'rm -f /tmp/tempfile' EXIT
+     ```
+
+3. **Custom Error Messages**:
+   - Use functions to print error messages and exit.
+   - Example:
+     ```bash
+     error_exit() {
+       echo "$1" 1>&2
+       exit 1
+     }
+
+     ls /nonexistent || error_exit "File not found!"
+     ```
+
+### Debugging Techniques
+
+1. **Enabling Debug Mode**:
+   - Run a script in debug mode to see each command executed.
+   - **Using `-x`**:
+     ```bash
+     bash -x script.sh
+     ```
+   - Or, add `set -x` at the beginning of the script to enable debugging for specific sections.
+
+2. **Disabling Debug Mode**:
+   - Use `set +x` to turn off debugging.
+   - Example:
+     ```bash
+     set -x   # Enable debug mode
+     echo "Debugging this command"
+     set +x   # Disable debug mode
+     ```
+
+3. **Printing Variable Values**:
+   - Use `echo` or `printf` to print variable values for debugging.
+   - Example:
+     ```bash
+     echo "Variable value: $myvar"
+     ```
+
+4. **Using `trap` for Debugging**:
+   - Execute a command before each command runs by using `trap` with the `DEBUG` signal.
+   - Example:
+     ```bash
+     trap 'echo "Executing: $BASH_COMMAND"' DEBUG
+     ```
+
+5. **Conditional Logging**:
+   - Log messages at specific points in the script, especially within conditional checks.
+   - Example:
+     ```bash
+     if [ -f "importantfile.txt" ]; then
+       echo "File exists."
+     else
+       echo "Error: File missing." >> error_log.txt
+     fi
+     ```
+
+### Error Logging
+
+- Redirect error messages to a log file using `2>`.
+  - Example:
+    ```bash
+    command 2>> error_log.txt
+    ```
+
+- Log both standard output and error with `&>`.
+  - Example:
+    ```bash
+    mycommand &> full_log.txt
+    ```
+
+### Testing and Troubleshooting Tips
+
+1. **Start Small**:
+   - Test individual commands before combining them into a full script.
+
+2. **Use Temporary Files**:
+   - Store intermediate results in temporary files for complex scripts.
+   - Example:
+     ```bash
+     command > /tmp/output.txt
+     ```
+
+3. **Break Down Complex Commands**:
+   - Split commands over multiple lines or use subshells to isolate logic.
+   - Example:
+     ```bash
+     ( command1 && command2 ) || echo "An error occurred."
+     ```
+
+---
+
+### Practice Exercise
+
+1. **Error Handling with `trap`**:
+   - Write a script that creates a temporary file and deletes it on exit using `trap`.
+
+2. **Debug Mode**:
+   - Write a script with an intentional error, then run it in debug mode to identify the issue.
+
+3. **Custom Error Messages**:
+   - Create a function that checks if a file exists. If not, it should print a custom error message and exit.
+
+4. **Exit Status Check**:
+   - Write a script that attempts to copy a file. If the copy fails, it should log an error message with the date and time.
+
+---
+
+# 12. Advanced Topics
+
+After mastering the basics of Bash scripting, it’s helpful to explore advanced concepts that add sophistication and flexibility to your scripts. This section covers advanced topics such as regular expressions, parallel processing, subshells, process management, and more.
+
+---
+
+### 1. Regular Expressions
+
+Regular expressions (regex) are used for pattern matching, making them powerful tools for text processing.
+
+- **Basic Usage with `grep`**:
+  ```bash
+  grep -E "pattern" filename.txt
+```
+- Common Regex Patterns:
+```bash
+^ – Matches the beginning of a line.
+$ – Matches the end of a line.
+. – Matches any single character.
+[abc] – Matches any character in the brackets.
+* – Matches zero or more occurrences of the preceding character.
++ – Matches one or more occurrences of the preceding character.
+\d – Matches any digit (when using grep -P for Perl syntax).
+```
+
+- Example:
+```bash
+# Find lines that start with a digit
+grep -E "^[0-9]" filename.txt
+```
+### 2. Subshells and Command Substitution
+Subshells allow you to run commands in an isolated environment, making it easy to execute commands without affecting the main shell environment.
+- Basic Subshell Syntax:
+```bash
+(command1; command2)
+```
+- Example
+```bash
+(cd /tmp && ls)
+echo "Current directory: $(pwd)"  # Directory remains unchanged
+```
+- Command Substitution:
+  - Run a command and store its output in a variable.
+```bash
+result=$(ls /tmp)
+echo "$result"
+```
+### 3. Parallel Processing
+Parallel processing improves performance by running multiple tasks simultaneously.
+- **Using &**
+  - Append & to a command to run it in the background
+```bash
+command1 &
+command2 &
+wait  # Waits for all background jobs to complete
+```
+- Using xargs for Parallel Execution:
+```bash
+cat filelist.txt | xargs -n 1 -P 4 command
+```
+- -n specifies the number of arguments per command, and -P sets the number of parallel jobs.
+### 4. Process Management
+Manage running processes to control the flow and resource usage of scripts.
+- Background Jobs:
+  - Run a command in the background using & and manage it with jobs, fg, and bg.
+```bash
+command &
+jobs     # List background jobs
+fg %1    # Bring job 1 to the foreground
+```
+
+- Killing Processes:
+  - Use kill to terminate a process by PID.
+```bash
+kill -9 <pid>
+```
+
+### 5. Arrays in Bash
+Arrays allow you to store multiple values in a single variable.
+  - Declaring an Array:
+```bash
+my_array=(value1 value2 value3)
+```
+  - Accessing elements
+``bash
+echo ${my_array[0]}  # Outputs 'value1'
+```
+  - Looping through Arrays:
+```bash
+for item in "${my_array[@]}"; do
+  echo "$item"
+done
+```
+
+### 6. Associative Arrays
+Associative arrays use named keys instead of numeric indices (Bash 4+).
+  - Declaring an Associative Array:
+```bash
+declare -A my_dict
+my_dict[key1]="value1"
+my_dict[key2]="value2"
+```
+  - Accessing Elements:
+```bash
+echo "${my_dict[key1]}"  # Outputs 'value1'
+```
+  - Looping through Associative Arrays:
+```bash
+for key in "${!my_dict[@]}"; do
+  echo "$key: ${my_dict[$key]}"
+done
+```
+
+### 7. Working with JSON Data
+JSON is commonly used for data interchange, and jq is a powerful tool for parsing JSON in Bash scripts.
+  - Using jq to Parse JSON:
+```bash
+jq '.key' file.json
+```
+  - Example:
+```bash
+cat data.json | jq '.users[0].name'
+```
+### 8. Network Requests with curl
+The curl command allows you to interact with APIs and download files from the web.
+- **Making a GET Request:**
+```bash
+curl http://example.com
+```
+- **Making a POST Request with Data:**
+```bash
+curl -X POST -d "param1=value1&param2=value2" http://example.com
+```
+- **Working with JSON Data:**
+```bash
+curl -H "Content-Type: application/json" -d '{"key": "value"}' http://example.com
+```
+### Practice Exercises
+
+1.  **Regex Search**:
+    
+    *   Write a script that searches a file for lines that contain email addresses using regex.
+        
+2.  **Parallel Processing**:
+    
+    *   Create a script that runs three different commands in parallel and waits for all of them to finish.
+        
+3.  **JSON Parsing**:
+    
+    *   Write a script that uses jq to extract a specific value from a JSON file.
+        
+4.  **Array Manipulation**:
+    
+    *   Declare an array of file names and loop through the array to check if each file exists.
+        
+5.  **Network Request**:
+    
+    *   Use curl to make a GET request to an API and save the response to a file.
