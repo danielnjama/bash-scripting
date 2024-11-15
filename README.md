@@ -1739,3 +1739,172 @@ curl -H "Content-Type: application/json" -d '{"key": "value"}' http://example.co
 5.  **Network Request**:
     
     *   Use curl to make a GET request to an API and save the response to a file.
+
+
+    # 13. Practical Applications of Bash Scripting
+
+Bash scripting is a versatile tool for automating tasks, system administration, data processing, and more. This section explores practical applications of Bash scripting, providing examples you can adapt for everyday tasks and workflows.
+
+---
+
+### 1. Automating System Maintenance
+
+Scripts can automate routine system maintenance tasks such as backups, cleanup, and updates.
+
+- **Automated Backup Script**:
+  - This script backs up a specified directory to a backup location.
+```bash
+  #!/bin/bash
+  source_dir="/path/to/source"
+  backup_dir="/path/to/backup"
+  timestamp=$(date +%Y%m%d_%H%M%S)
+  backup_file="$backup_dir/backup_$timestamp.tar.gz"
+
+  tar -czf "$backup_file" "$source_dir"
+  echo "Backup completed: $backup_file"
+```
+
+- **System Cleanup Script:**
+  - This script deletes old log files and frees up disk space.
+```bash
+#!/bin/bash
+find /var/log -name "*.log" -type f -mtime +30 -exec rm {} \;
+echo "Old logs cleaned up."
+```
+
+### 2. Managing User Accounts
+Automate user account creation, deletion, and password resets, especially useful in a multi-user environment.
+  - Create New User Accounts:
+```bash
+#!/bin/bash
+for user in user1 user2 user3; do
+  sudo adduser "$user"
+  echo "$user created successfully."
+done
+```
+
+- Batch Password Reset:
+```bash
+#!/bin/bash
+for user in $(cat users.txt); do
+  echo "$user:NewPassword" | sudo chpasswd
+  echo "Password reset for $user"
+done
+```
+### 3. Data Processing and Text Manipulation
+Bash scripts can be used to process and analyze data files, especially text-based data formats like CSV or log files.
+  - **CSV Data Extraction:**
+    - Extract specific columns from a CSV file (e.g., extracting user emails).
+```bash
+#!/bin/bash
+cut -d ',' -f 2 users.csv > emails.txt
+echo "Emails extracted to emails.txt"
+```
+  - **Log Analysis:**
+    - This script analyzes a log file for error messages.
+```bash
+#!/bin/bash
+grep -i "error" /var/log/syslog | sort | uniq -c | sort -nr > error_summary.txt
+echo "Error summary saved to error_summary.txt"
+```
+
+### 4. Automating Network Tasks
+Network tasks like ping tests, server monitoring, and file downloads can be automated with Bash.
+- Ping Test for Multiple Servers:
+```bash
+#!/bin/bash
+servers=("192.168.1.1" "google.com" "example.com")
+for server in "${servers[@]}"; do
+  ping -c 1 "$server" &> /dev/null
+  if [ $? -eq 0 ]; then
+    echo "$server is reachable."
+  else
+    echo "$server is unreachable."
+  fi
+done
+```
+- Automated File Download:
+  - This script downloads a list of files from URLs in urls.txt.
+```bash
+#!/bin/bash
+while IFS= read -r url; do
+  wget "$url"
+done < urls.txt
+echo "Files downloaded."
+```
+
+### 5. Working with APIs
+Bash scripts can interact with web APIs to automate data retrieval and processing.
+- **Fetch Weather Information**:
+  - This example fetches weather data using curl from a weather API.
+```bash
+#!/bin/bash
+city="London"
+api_key="your_api_key_here"
+curl "http://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api_key" | jq .
+```
+- **API Data Processing**:
+  - Fetch and process data from a public API.
+```bash
+#!/bin/bash
+curl -s "https://jsonplaceholder.typicode.com/posts" | jq '.[].title' > titles.txt
+echo "Post titles saved to titles.txt"
+```
+
+### 6. Monitoring and Alerts
+Set up simple monitoring and alert scripts to notify you of system or application status changes.
+- **Disk Usage Monitoring**:
+  - This script checks if disk usage exceeds a specified threshold and sends an alert.
+```bash
+#!/bin/bash
+usage=$(df / | grep / | awk '{print $5}' | sed 's/%//g')
+if [ "$usage" -gt 80 ]; then
+  echo "Warning: Disk usage is above 80%!" | mail -s "Disk Usage Alert" user@example.com
+fi
+```
+- **Service Status Monitoring**:
+  - Check if a service is running and restart it if it’s not.
+```bash
+#!/bin/bash
+service="nginx"
+if ! systemctl is-active --quiet "$service"; then
+  echo "$service is down. Restarting..."
+  systemctl restart "$service"
+else
+  echo "$service is running."
+fi
+```
+
+### 7. Task Scheduling with cron
+Use cron to schedule your scripts to run at specific times, automating tasks without manual intervention.
+- **Setting Up a Cron Job**:
+  - Edit crontab with crontab -e and add a job.
+  - Example: Run backup every day at midnight.
+```bash
+0 0 * * * /path/to/backup_script.sh
+```
+- **Listing Cron Jobs**:
+  - Use crontab -l to see all scheduled jobs for the current user
+
+### Practice Exercises
+
+1.  **Automated Backup and Cleanup**:
+    
+    *   Write a script that backs up files from a specified directory and deletes backups older than 7 days.
+        
+2.  **User Account Report**:
+    
+    *   Create a script that generates a report of all user accounts, including their last login time.
+        
+3.  **Log File Analysis**:
+    
+    *   Write a script that summarizes the types and counts of errors in a log file.
+        
+4.  **Server Ping Test**:
+    
+    *   Write a script that checks if specific servers are reachable and logs the status.
+        
+5.  **Disk Usage Alert**:
+    
+    *   Set up a script to monitor disk usage and send an email if it exceeds a certain threshold.
+
