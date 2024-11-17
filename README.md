@@ -1592,7 +1592,7 @@ After mastering the basics of Bash scripting, it’s helpful to explore advanced
 Regular expressions (regex) are used for pattern matching, making them powerful tools for text processing.
 
 - **Basic Usage with `grep`**:
-  ```bash
+```bash
   grep -E "pattern" filename.txt
 ```
 - Common Regex Patterns:
@@ -1741,7 +1741,8 @@ curl -H "Content-Type: application/json" -d '{"key": "value"}' http://example.co
     *   Use curl to make a GET request to an API and save the response to a file.
 
 
-    # 13. Practical Applications of Bash Scripting
+---
+# 13. Practical Applications of Bash Scripting
 
 Bash scripting is a versatile tool for automating tasks, system administration, data processing, and more. This section explores practical applications of Bash scripting, providing examples you can adapt for everyday tasks and workflows.
 
